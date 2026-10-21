@@ -1,1 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>努力クエスト｜学習・筋トレ記録RPG</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#14112b; --panel:#1f1a42; --panel2:#2a2358; --line:#4a3f8f;
+  --text:#f3efff; --sub:#a59fd0; --gold:#ffc94a; --gold2:#ff8a3d;
+  --study:#4cc9f0; --body:#ff5d8f; --other:#9be564; --danger:#ff6b6b;
+  --pix:"DotGothic16","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;line-height:1.6;
+  background-image:radial-gradient(var(--panel2) 1px,transparent 1px);background-size:22px 22px}
+.wrap{max-width:760px;margin:0 auto;padding:16px 14px 40px;display:grid;gap:16px}
+.box{background:var(--panel);border:3px solid var(--line);border-radius:6px;
+  box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--line);padding:16px}
+h1,h2,.pix{font-family:var(--pix);font-weight:400;margin:0}
+h2{font-size:1.05rem;color:var(--gold);margin-bottom:12px}
+.hero{display:flex;gap:14px;align-items:center}
+.lv{flex:none;width:84px;height:84px;border:3px solid var(--gold);border-radius:6px;background:var(--panel2);
+  display:grid;place-items:center;text-align:center;font-family:var(--pix);line-height:1.1}
+.lv small{font-size:.75rem;color:var(--sub);display:block}
+.lv b{font-size:2.2rem;color:var(--gold);font-weight:400}
+.who{flex:1;min-width:0}
+.who input{width:100%;font:inherit;font-family:var(--pix);font-size:1.25rem;background:transparent;color:var(--text);
+  border:0;border-bottom:2px dashed var(--line);padding:2px 0;margin-bottom:8px}
+.who input:focus{outline:none;border-color:var(--gold)}
+.bar{height:20px;background:#0d0a20;border:2px solid var(--line);border-radius:4px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold2),var(--gold));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.exp{display:flex;justify-content:space-between;font-size:.85rem;color:var(--sub);margin-top:4px;font-family:var(--pix)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{background:var(--panel2);border-radius:4px;padding:8px;text-align:center;font-size:.8rem;color:var(--sub)}
+.stat b{display:block;font-family:var(--pix);font-weight:400;font-size:1.1rem}
+.stat.s b{color:var(--study)}.stat.b b{color:var(--body)}.stat.o b{color:var(--other)}
+form{display:grid;gap:12px}
+label{display:grid;gap:4px;font-size:.85rem;color:var(--sub)}
+input,select,button{font:inherit}
+input[type=text],input[type=number],select{width:100%;padding:10px 12px;border-radius:4px;border:2px solid var(--line);
+  background:#0d0a20;color:var(--text);min-height:44px}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cats input{position:absolute;opacity:0;pointer-events:none}
+.cats span{display:block;text-align:center;padding:10px 4px;border:2px solid var(--line);border-radius:4px;
+  background:var(--panel2);cursor:pointer;color:var(--text);font-family:var(--pix);min-height:44px}
+.cats input:checked+span{background:var(--c);color:#14112b;border-color:var(--c)}
+.cats input:focus-visible+span{outline:3px solid var(--gold);outline-offset:1px}
+.preview{font-family:var(--pix);color:var(--gold);text-align:center;font-size:1.1rem;min-height:1.6em}
+.go{min-height:52px;border:0;border-radius:6px;cursor:pointer;font-family:var(--pix);font-size:1.15rem;color:#2a1600;
+  background:linear-gradient(var(--gold),var(--gold2));box-shadow:0 4px 0 #a14d10;transition:transform .08s,box-shadow .08s}
+.go:active{transform:translateY(3px);box-shadow:0 1px 0 #a14d10}
+.rule{font-size:.78rem;color:var(--sub)}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--panel2);
+  border-left:5px solid var(--c);border-radius:4px;padding:8px 10px}
+.tag{font-family:var(--pix);font-size:.8rem;color:var(--c)}
+.what{min-width:0;overflow-wrap:anywhere}
+.when{font-size:.75rem;color:var(--sub)}
+.gain{font-family:var(--pix);color:var(--gold);white-space:nowrap}
+.empty{color:var(--sub);text-align:center;padding:14px 0}
+.foot{display:flex;justify-content:flex-end}
+.reset{background:transparent;border:2px solid var(--danger);color:var(--danger);border-radius:4px;padding:6px 12px;cursor:pointer;min-height:40px}
+/* level up + toast */
+.float{position:fixed;left:50%;top:38%;transform:translate(-50%,0);font-family:var(--pix);font-size:1.6rem;color:var(--gold);
+  pointer-events:none;animation:rise 1.2s ease-out forwards;text-shadow:0 2px 0 #a14d10;z-index:5}
+@keyframes rise{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-70px)}}
+.lvup{position:fixed;inset:0;display:none;place-items:center;background:rgba(10,8,30,.82);z-index:10;padding:20px}
+.lvup.on{display:grid}
+.lvup .card{background:var(--panel);border:4px solid var(--gold);border-radius:8px;padding:28px 24px;text-align:center;max-width:360px;
+  animation:pop .5s cubic-bezier(.2,1.6,.4,1);box-shadow:0 0 40px rgba(255,201,74,.45)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.lvup h2{font-size:1.7rem;margin-bottom:6px}
+.lvup .n{font-family:var(--pix);font-size:4rem;color:var(--text);line-height:1.1}
+.lvup button{margin-top:16px;padding:10px 28px;border:0;border-radius:6px;font-family:var(--pix);font-size:1.05rem;
+  background:var(--gold);color:#2a1600;cursor:pointer;min-height:44px}
+.spark{position:fixed;width:8px;height:8px;background:var(--gold);z-index:11;pointer-events:none;animation:fly 1s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--x),var(--y));opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:420px){.lv{width:70px;height:70px}.lv b{font-size:1.8rem}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="box" aria-label="ステータス">
+    <div class="hero">
+      <div class="lv"><div><small>Lv.</small><b id="lv">1</b></div></div>
+      <div class="who">
+        <input id="name" type="text" maxlength="14" aria-label="プレイヤー名" placeholder="なまえを入力">
+        <div class="bar" role="progressbar" aria-label="経験値" id="barA"><div class="fill" id="fill"></div></div>
+        <div class="exp"><span>EXP <span id="cur">0</span> / <span id="need">100</span></span><span id="left"></span></div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat s"><b id="tS">0</b>学習EXP</div>
+      <div class="stat b"><b id="tB">0</b>筋トレEXP</div>
+      <div class="stat o"><b id="tO">0</b>その他EXP</div>
+    </div>
+  </section>
+
+  <section class="box" aria-label="記録入力">
+    <h2>きょうの努力を記録</h2>
+    <form id="form">
+      <div class="cats" role="radiogroup" aria-label="カテゴリ">
+        <label style="--c:var(--study)"><input type="radio" name="cat" value="study" checked><span>📚 学習</span></label>
+        <label style="--c:var(--body)"><input type="radio" name="cat" value="body"><span>💪 筋トレ</span></label>
+        <label style="--c:var(--other)"><input type="radio" name="cat" value="other"><span>✨ その他</span></label>
+      </div>
+      <label>活動内容
+        <input id="act" type="text" maxlength="40" required placeholder="例：プログラミング学習、腕立て伏せ">
+      </label>
+      <div class="row">
+        <label>単位
+          <select id="unit"><option value="min">時間（分）</option><option value="rep">回数</option></select>
+        </label>
+        <label><span id="valLabel">時間（分）</span>
+          <input id="val" type="number" min="1" max="9999" step="1" inputmode="numeric" required placeholder="30">
+        </label>
+      </div>
+      <div class="preview" id="preview" aria-live="polite"></div>
+      <button class="go" type="submit">記録＆EXP獲得</button>
+      <div class="rule" id="rule"></div>
+    </form>
+  </section>
+
+  <section class="box" aria-label="履歴">
+    <h2>冒険のきろく</h2>
+    <ul id="log"></ul>
+    <div class="foot"><button class="reset" id="reset" type="button">データをリセット</button></div>
+  </section>
+</main>
+
+<div class="lvup" id="lvup" role="dialog" aria-modal="true" aria-label="レベルアップ">
+  <div class="card">
+    <h2>LEVEL UP!</h2>
+    <div class="n" id="lvupN">2</div>
+    <p id="lvupMsg">レベルが上がった！</p>
+    <button id="lvupOk" type="button">つづける</button>
+  </div>
+</div>
+
+<script>
+// ===== 設定 =====
+const KEY = 'effortQuest.v1';
+const CATS = {
+  study: { label: '学習',   icon: '📚', color: 'var(--study)', min: 10, rep: 2 },
+  body:  { label: '筋トレ', icon: '💪', color: 'var(--body)',  min: 15, rep: 3 },
+  other: { label: 'その他', icon: '✨', color: 'var(--other)', min: 8,  rep: 2 }
+};
+const needFor = lv => 100 + (lv - 1) * 50; // Lv.1→2は100、以降+50ずつ
+
+// ===== 状態 =====
+let state = { name: '', level: 1, exp: 0, logs: [] };
+try {
+  const s = JSON.parse(localStorage.getItem(KEY));
+  if (s && typeof s.level === 'number' && Array.isArray(s.logs)) state = s;
+} catch (e) { /* 空のときは初期状態で開始 */ }
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* 保存不可でも動作は継続 */ }
+}
+
+const $ = id => document.getElementById(id);
+const unitEl = $('unit'), valEl = $('val'), actEl = $('act');
+const curCat = () => document.querySelector('input[name=cat]:checked').value;
+const calc = () => {
+  const v = parseInt(valEl.value, 10);
+  return v > 0 ? v * CATS[curCat()][unitEl.value] : 0;
+};
+
+// ===== 描画 =====
+function render() {
+  const need = needFor(state.level);
+  $('lv').textContent = state.level;
+  $('cur').textContent = state.exp;
+  $('need').textContent = need;
+  $('left').textContent = 'あと ' + (need - state.exp);
+  $('fill').style.width = Math.min(100, state.exp / need * 100) + '%';
+  $('barA').setAttribute('aria-valuenow', Math.round(state.exp / need * 100));
+  if (document.activeElement !== $('name')) $('name').value = state.name;
+
+  const tot = { study: 0, body: 0, other: 0 };
+  state.logs.forEach(l => { if (tot[l.cat] !== undefined) tot[l.cat] += l.exp; });
+  $('tS').textContent = tot.study; $('tB').textContent = tot.body; $('tO').textContent = tot.other;
+
+  const ul = $('log');
+  ul.textContent = '';
+  if (!state.logs.length) {
+    const li = document.createElement('li');
+    li.className = 'empty'; li.style.display = 'block'; li.style.borderLeft = '0';
+    li.textContent = 'まだ記録がありません。最初の1件でEXPを獲得しよう！';
+    ul.appendChild(li);
+  }
+  state.logs.slice(0, 50).forEach(l => {
+    const c = CATS[l.cat] || CATS.other;
+    const li = document.createElement('li');
+    li.style.setProperty('--c', c.color);
+    const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = c.icon + ' ' + c.label;
+    const mid = document.createElement('div'); mid.className = 'what';
+    const w = document.createElement('div'); w.textContent = l.act + '（' + l.val + (l.unit === 'min' ? '分' : '回') + '）';
+    const d = document.createElement('div'); d.className = 'when';
+    d.textContent = new Date(l.t).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    mid.append(w, d);
+    const g = document.createElement('span'); g.className = 'gain'; g.textContent = '+' + l.exp + ' EXP';
+    li.append(tag, mid, g);
+    ul.appendChild(li);
+  });
+}
+function updateForm() {
+  const isMin = unitEl.value === 'min', c = CATS[curCat()];
+  $('valLabel').textContent = isMin ? '時間（分）' : '回数';
+  valEl.placeholder = isMin ? '30' : '20';
+  const e = calc();
+  $('preview').textContent = e ? '獲得予定：+' + e + ' EXP' : '';
+  $('rule').textContent = c.label + '：1分＝' + c.min + 'EXP ／ 1回＝' + c.rep + 'EXP';
+}
+
+// ===== 演出 =====
+function floatText(t) {
+  const el = document.createElement('div');
+  el.className = 'float'; el.textContent = t;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+}
+function sparks() {
+  for (let i = 0; i < 24; i++) {
+    const s = document.createElement('div');
+    const a = Math.random() * Math.PI * 2, r = 120 + Math.random() * 160;
+    s.className = 'spark';
+    s.style.left = '50%'; s.style.top = '45%';
+    s.style.setProperty('--x', Math.cos(a) * r + 'px');
+    s.style.setProperty('--y', Math.sin(a) * r + 'px');
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1000);
+  }
+}
+function levelUp(from, to) {
+  $('lvupN').textContent = 'Lv.' + to;
+  $('lvupMsg').textContent = to - from > 1
+    ? (to - from) + 'レベルアップ！すごい成長だ！'
+    : '努力が実を結んだ！次のレベルを目指そう。';
+  $('lvup').classList.add('on');
+  $('lvupOk').focus();
+  sparks();
+}
+
+// ===== イベント =====
+$('form').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = parseInt(valEl.value, 10), act = actEl.value.trim();
+  if (!(v > 0) || !act) return;
+  const gain = calc(), startLv = state.level;
+  state.logs.unshift({ t: Date.now(), cat: curCat(), act, unit: unitEl.value, val: v, exp: gain });
+  state.logs = state.logs.slice(0, 200);
+  state.exp += gain;
+  while (state.exp >= needFor(state.level)) { state.exp -= needFor(state.level); state.level++; }
+  save(); render();
+  floatText('+' + gain + ' EXP');
+  if (state.level > startLv) levelUp(startLv, state.level);
+  actEl.value = ''; valEl.value = ''; updateForm();
+});
+$('lvupOk').addEventListener('click', () => $('lvup').classList.remove('on'));
+$('name').addEventListener('input', e => { state.name = e.target.value; save(); });
+$('reset').addEventListener('click', () => {
+  if (confirm('レベルと履歴をすべて消してはじめからやり直しますか？')) {
+    state = { name: state.name, level: 1, exp: 0, logs: [] };
+    save(); render();
+  }
+});
+[valEl, unitEl].forEach(el => el.addEventListener('input', updateForm));
+document.querySelectorAll('input[name=cat]').forEach(el => el.addEventListener('change', updateForm));
+
+render(); updateForm();
+</script>
+</body>
+</html>
 
